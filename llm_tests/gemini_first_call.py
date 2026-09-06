@@ -10,7 +10,7 @@ client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 response = client.models.generate_content(
     model="gemini-3.6-flash",
-    contents="Bonjour, ça va ?",
+    contents="Bonjour comment corriger son petit frère après un acte de manque de respect ?",
     config=types.GenerateContentConfig(
         automatic_function_calling=types.AutomaticFunctionCallingConfig(
             disable=True
