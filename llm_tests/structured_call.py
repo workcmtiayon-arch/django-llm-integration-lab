@@ -19,3 +19,8 @@ response = client.models.generate_content(
         response_schema=TaskAnalysis,
     ),
 )
+
+# response.parsed est déjà une instance validée de TaskAnalysis
+analysis: TaskAnalysis = response.parsed
+for suggestion in analysis.suggestions:
+    print(suggestion.title, suggestion.priority)
