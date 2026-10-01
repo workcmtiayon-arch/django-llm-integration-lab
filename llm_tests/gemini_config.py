@@ -14,10 +14,10 @@ try:
             automatic_function_calling=types.AutomaticFunctionCallingConfig(
                 disable=True
             ),
-            temperature=0.9,
+            temperature=0.2,
             max_output_tokens=2000,
             system_instruction=(
-                "Tu es un assistant qui aide à organiser les taches en semaines et en mois. reponds de facon concise et actionnable"
+                "comment u vas ?"
             ),
         ),
     )
