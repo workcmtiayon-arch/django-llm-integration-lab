@@ -1,8 +1,17 @@
+from uuid import uuid4
+
+from PIL import Image
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from .validators import validate_profile_image
+
+
+def profile_photo_upload_path(instance, filename):
+    with Image.open(instance.profile_photo.file) as image:
+        extension = {"JPEG": "jpg", "PNG": "png", "WEBP": "webp"}[image.format]
+    return f"profiles/{instance.pk}/{uuid4().hex}.{extension}"
 
 
 class UserManager(BaseUserManager):
@@ -35,7 +44,7 @@ class User(AbstractUser):
     username = None
     email = models.EmailField("email address", unique=True)
     profile_photo = models.ImageField(
-        upload_to="profiles/%Y/%m/",
+        upload_to=profile_photo_upload_path,
         blank=True,
         validators=[validate_profile_image],
     )

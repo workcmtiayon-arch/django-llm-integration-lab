@@ -33,3 +33,9 @@ class ProfileUpdateForm(forms.ModelForm):
         if User.objects.filter(email__iexact=email).exclude(pk=self.instance.pk).exists():
             raise forms.ValidationError("An account with this email already exists.")
         return email
+
+
+class ProfilePhotoForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ("profile_photo",)
