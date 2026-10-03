@@ -1,6 +1,7 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import FormView
+from django.views.generic import FormView, TemplateView
 
 from .forms import RegistrationForm
 
@@ -14,3 +15,7 @@ class RegistrationView(FormView):
         form.save()
         messages.success(self.request, "Your account has been created. Please sign in.")
         return super().form_valid(form)
+
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = "accounts/profile.html"
