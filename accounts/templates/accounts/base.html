@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Compte{% endblock %} · Formation AI</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.5 system-ui, sans-serif; background: #f4f6fa; color: #172033; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    header { background: #fff; border-bottom: 1px solid #e2e7f0; }
+    nav { max-width: 960px; margin: auto; padding: 1rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    nav a:first-child { font-weight: 700; margin-right: auto; }
+    main { max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    .card { background: #fff; border: 1px solid #e2e7f0; border-radius: 12px; padding: clamp(1.25rem, 4vw, 2rem); box-shadow: 0 8px 28px #1720330a; }
+    a { color: #2457c5; }
+    button, .button { display: inline-block; border: 0; border-radius: 8px; padding: .7rem 1rem; background: #2457c5; color: #fff; font: inherit; text-decoration: none; cursor: pointer; }
+    input { max-width: 100%; padding: .6rem; border: 1px solid #bbc5d5; border-radius: 6px; font: inherit; }
+    input[type=file] { display: block; }
+    label { font-weight: 600; }
+    form p { display: grid; gap: .35rem; }
+    .messages { list-style: none; padding: 0; }
+    .messages li { padding: .75rem 1rem; margin: .5rem 0; border-radius: 8px; background: #e9f5ed; }
+    .errors { color: #a32121; }
+    .avatar { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; background: #e6ebf4; display: grid; place-items: center; font-size: 2rem; }
+    .actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1.25rem; }
+    @media (max-width: 520px) { main { margin-top: 1rem; } nav { gap: .75rem; } }
+  </style>
+</head>
+<body>
+  <header>
+    <nav aria-label="Navigation principale">
+      <a href="{% url 'accounts:profile' %}">Formation AI</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'accounts:profile' %}">Profil</a>
+        <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button type="submit">Déconnexion</button></form>
+      {% else %}
+        <a href="{% url 'accounts:login' %}">Connexion</a>
+        <a href="{% url 'accounts:register' %}">Créer un compte</a>
+      {% endif %}
+    </nav>
+  </header>
+  <main>
+    {% if messages %}<ul class="messages">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
+    <section class="card">{% block content %}{% endblock %}</section>
+  </main>
+</body>
+</html>

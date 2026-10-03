@@ -1,0 +1,11 @@
+{% extends "accounts/base.html" %}
+{% block title %}Modifier ma photo{% endblock %}
+{% block content %}
+<h1>Modifier ma photo de profil</h1>
+{% if user.profile_photo %}<img class="avatar" src="{{ user.profile_photo.url }}" alt="Photo de profil actuelle">{% endif %}
+<form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
+  {% if form.non_field_errors %}<div class="errors">{{ form.non_field_errors }}</div>{% endif %}
+  {{ form.as_p }}
+  <button type="submit">Enregistrer la photo</button>
+</form>
+{% endblock %}

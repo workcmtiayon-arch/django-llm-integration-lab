@@ -1,0 +1,17 @@
+{% extends "accounts/base.html" %}
+{% block title %}Mon profil{% endblock %}
+{% block content %}
+<h1>Mon profil</h1>
+{% if user.profile_photo %}<img class="avatar" src="{{ user.profile_photo.url }}" alt="Photo de profil de {{ user.get_full_name|default:user.email }}">{% else %}<div class="avatar" aria-label="Aucune photo de profil">{{ user.email|first|upper }}</div>{% endif %}
+<dl>
+  <dt>Prénom</dt><dd>{{ user.first_name|default:"—" }}</dd>
+  <dt>Nom</dt><dd>{{ user.last_name|default:"—" }}</dd>
+  <dt>Email</dt><dd>{{ user.email }}</dd>
+  <dt>Inscrit le</dt><dd>{{ user.date_joined|date:"d/m/Y" }}</dd>
+</dl>
+<div class="actions">
+  <a class="button" href="{% url 'accounts:profile_edit' %}">Modifier mon profil</a>
+  <a class="button" href="{% url 'accounts:profile_photo' %}">Modifier ma photo</a>
+  <a class="button" href="{% url 'accounts:password_change' %}">Changer mon mot de passe</a>
+</div>
+{% endblock %}

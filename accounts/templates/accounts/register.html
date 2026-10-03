@@ -1,0 +1,11 @@
+{% extends "accounts/base.html" %}
+{% block title %}Créer un compte{% endblock %}
+{% block content %}
+<h1>Créer un compte</h1>
+<form method="post" novalidate>{% csrf_token %}
+  {% if form.non_field_errors %}<div class="errors">{{ form.non_field_errors }}</div>{% endif %}
+  {{ form.as_p }}
+  <button type="submit">Créer mon compte</button>
+</form>
+<p>Vous avez déjà un compte ? <a href="{% url 'accounts:login' %}">Connectez-vous</a>.</p>
+{% endblock %}
