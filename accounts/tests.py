@@ -19,7 +19,7 @@ class UserManagerTests(TestCase):
             password="test-password",
         )
 
-        self.assertEqual(user.email, "Learner@example.com")
+        self.assertEqual(user.email, "learner@example.com")
         self.assertTrue(user.check_password("test-password"))
         self.assertFalse(user.is_staff)
 
@@ -105,6 +105,13 @@ class AuthenticationTests(AccountTestCase):
             {"username": self.user.email, "password": self.password},
         )
 
+        self.assertRedirects(response, reverse("accounts:profile"))
+
+    def test_login_email_is_case_insensitive(self):
+        response = self.client.post(
+            reverse("accounts:login"),
+            {"username": "LEARNER@EXAMPLE.COM", "password": self.password},
+        )
         self.assertRedirects(response, reverse("accounts:profile"))
 
     def test_bad_password_and_unknown_user_show_generic_error(self):

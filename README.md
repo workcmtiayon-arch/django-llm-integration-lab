@@ -4,7 +4,7 @@ Projet de formation Django consacré à l’intégration de fournisseurs de mod�
 
 ## Fonctionnalités
 
-- Inscription avec adresse email unique et validation native des mots de passe Django.
+- Inscription avec adresse email normalisée et connexion insensible à la casse, ainsi que la validation native des mots de passe Django.
 - Connexion par email, déconnexion par POST et gestion des sessions Django.
 - Profil privé, modification de l’email et des informations personnelles.
 - Photo de profil JPEG, PNG ou WebP (5 Mo maximum), avec vérification du contenu et nom de fichier généré par l’application.
