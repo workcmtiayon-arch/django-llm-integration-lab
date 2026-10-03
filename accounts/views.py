@@ -1,3 +1,16 @@
-from django.shortcuts import render
+from django.contrib import messages
+from django.urls import reverse_lazy
+from django.views.generic import FormView
 
-# Create your views here.
+from .forms import RegistrationForm
+
+
+class RegistrationView(FormView):
+    template_name = "accounts/register.html"
+    form_class = RegistrationForm
+    success_url = reverse_lazy("accounts:login")
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, "Your account has been created. Please sign in.")
+        return super().form_valid(form)
