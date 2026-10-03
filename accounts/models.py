@@ -32,6 +32,11 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     username = None
     email = models.EmailField("email address", unique=True)
+    profile_photo = models.ImageField(
+        upload_to="profiles/%Y/%m/",
+        blank=True,
+    )
+    updated_at = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
