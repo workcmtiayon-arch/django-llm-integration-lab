@@ -2,6 +2,8 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .validators import validate_profile_image
+
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -35,6 +37,7 @@ class User(AbstractUser):
     profile_photo = models.ImageField(
         upload_to="profiles/%Y/%m/",
         blank=True,
+        validators=[validate_profile_image],
     )
     updated_at = models.DateTimeField(auto_now=True)
 
