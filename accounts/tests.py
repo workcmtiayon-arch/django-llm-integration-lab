@@ -142,6 +142,18 @@ class AuthenticationTests(AccountTestCase):
         self.assertRedirects(response, reverse("accounts:login"))
         self.assertNotIn("_auth_user_id", self.client.session)
 
+    def test_custom_user_is_managed_in_admin(self):
+        admin_user = User.objects.create_superuser(
+            email="admin@example.com",
+            password="An-admin-password-842!",
+        )
+        self.client.force_login(admin_user)
+
+        response = self.client.get(reverse("admin:accounts_user_changelist"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.user.email)
+
 
 class ProfileTests(AccountTestCase):
     def test_private_profile_redirects_anonymous_user_to_login(self):
