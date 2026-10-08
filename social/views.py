@@ -6,6 +6,7 @@ from django.http import Http404
 from django.core.paginator import Paginator
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
@@ -106,6 +107,16 @@ def notifications(request):
             recipient=request.user, status=FriendshipStatus.PENDING
         ).count(),
     })
+
+
+@login_required
+@require_POST
+def mark_notifications_read(request):
+    Notification.objects.filter(recipient=request.user, read_at__isnull=True).update(
+        read_at=timezone.now()
+    )
+    messages.success(request, "Vos notifications ont été marquées comme lues.")
+    return redirect("social:notifications")
 
 
 @login_required
