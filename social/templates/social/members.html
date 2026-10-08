@@ -1,0 +1,7 @@
+{% extends "accounts/base.html" %}
+{% block title %}Membres{% endblock %}
+{% block content %}
+<p class="eyebrow">COMMUNAUTÉ</p><h1>Découvrir les membres</h1><p class="muted">Recherchez une personne et envoyez-lui une invitation.</p>
+<form class="search" method="get"><input type="search" name="q" value="{{ query }}" placeholder="Nom ou adresse email" aria-label="Rechercher un membre"><button type="submit">Rechercher</button></form>
+<div class="people">{% for person in people %}{% include "social/_person.html" with person=person %}{% empty %}<p class="empty">Aucun membre trouvé.</p>{% endfor %}</div>
+{% endblock %}

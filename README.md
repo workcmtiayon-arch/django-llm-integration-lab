@@ -7,6 +7,9 @@ Projet de formation Django consacré à l’intégration de fournisseurs de mod�
 - Inscription avec adresse email normalisée et connexion insensible à la casse, ainsi que la validation native des mots de passe Django.
 - Connexion par email, déconnexion par POST et gestion des sessions Django.
 - Profil privé, modification de l’email et des informations personnelles.
+- Réseau social : invitations d’amitié, gestion des amis et profils publics.
+- Publications publiques ou réservées aux amis, fil d’actualité, mentions « J’aime » et commentaires.
+- Notifications lors d’une invitation et de son acceptation.
 - Photo de profil JPEG, PNG ou WebP (5 Mo maximum), avec vérification du contenu et nom de fichier généré par l’application.
 - Changement et réinitialisation de mot de passe avec les vues et jetons natifs Django.
 - Protection CSRF, contrôle des redirections de connexion, routes privées et messages utilisateur.
@@ -25,6 +28,9 @@ Projet de formation Django consacré à l’intégration de fournisseurs de mod�
 ```text
 config/                 Réglages, ASGI/WSGI et URLs du projet
 accounts/               Modèle utilisateur, formulaires, vues, migrations et templates
+social/                 Réseau social : relations, publications, vues, permissions et templates
+  core/                 Modèles de base partagés
+  utils/                Enums, permissions et signaux métier
 llm_tests/              Exercices d’intégration Gemini
 docs/                   Notes locales d’expérimentation
 manage.py               Commandes Django
@@ -129,6 +135,22 @@ Pour SQLite, indiquez `DB_ENGINE=django.db.backends.sqlite3` et un chemin `DB_NA
 | `/accounts/profile/photo/` | Téléversement/remplacement de la photo |
 | `/accounts/password/change/` | Changement du mot de passe |
 | `/accounts/password/reset/` | Demande de réinitialisation |
+
+## Réseau social
+
+Après connexion, le fil d’actualité est accessible à `/`. Les membres peuvent y publier du texte, choisir entre une visibilité publique et une visibilité réservée aux amis, aimer et commenter les publications visibles.
+
+| Route | Usage |
+| --- | --- |
+| `/` | Fil d’actualité personnel |
+| `/membres/` | Recherche de membres et invitations |
+| `/amis/` | Liste des amis et retrait d’une relation |
+| `/invitations/` | Acceptation, refus ou annulation des invitations |
+| `/profil/<id>/` | Profil public et publications visibles de ce membre |
+
+Les opérations d’écriture utilisent des requêtes POST protégées par CSRF. Les vues vérifient l’identité de l’auteur avant modification ou suppression, le destinataire avant réponse à une invitation et les relations d’amitié avant l’accès aux publications réservées. Les permissions Django comprennent `social.moderate_post` pour la modération.
+
+Après mise à jour du dépôt, appliquez les migrations avec `python manage.py migrate`.
 
 ## Sécurité
 

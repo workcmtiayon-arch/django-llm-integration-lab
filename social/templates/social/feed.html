@@ -1,0 +1,7 @@
+{% extends "accounts/base.html" %}
+{% block title %}Fil d’actualité{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">VOTRE COMMUNAUTÉ</p><h1>Fil d’actualité</h1><p class="muted">Les nouvelles de vos amis et de vous-même.</p></div><a class="button secondary" href="{% url 'social:friends' %}">{{ friend_count }} ami{{ friend_count|pluralize:"s" }}</a></div>
+<form class="composer" method="post" action="{% url 'social:create_post' %}">{% csrf_token %}<h2>Partager une publication</h2>{{ post_form.content }}<div class="composer-footer">{{ post_form.visibility }}<button type="submit">Publier</button></div></form>
+{% for item in feed_posts %}{% include "social/_post.html" %}{% empty %}<div class="empty"><h2>Votre fil commence ici</h2><p>Ajoutez des amis ou partagez votre première publication.</p><a class="button" href="{% url 'social:members' %}">Découvrir les membres</a></div>{% endfor %}
+{% endblock %}

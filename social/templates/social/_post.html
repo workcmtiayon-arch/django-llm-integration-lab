@@ -1,0 +1,11 @@
+<article class="post">
+  <div class="post-head">
+    {% if item.post.author.profile_photo %}<img class="avatar tiny" src="{{ item.post.author.profile_photo.url }}" alt="">{% else %}<span class="avatar tiny">{{ item.post.author.first_name|first|default:item.post.author.email|first|upper }}</span>{% endif %}
+    <div><a class="person-name" href="{% url 'social:profile' item.post.author.pk %}">{{ item.post.author.get_full_name|default:item.post.author.email }}</a><div class="muted">{{ item.post.created_at|date:"d/m/Y à H:i" }} · {{ item.post.get_visibility_display }}</div></div>
+    {% if item.post.author.pk == user.pk or perms.social.moderate_post %}<div class="push inline-actions"><a class="link-button" href="{% url 'social:edit_post' item.post.pk %}">Modifier</a><form method="post" action="{% url 'social:delete_post' item.post.pk %}" onsubmit="return confirm('Supprimer cette publication ?')">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="link-button danger" type="submit">Supprimer</button></form></div>{% endif %}
+  </div>
+  <p class="post-content">{{ item.post.content|linebreaksbr }}</p>
+  <div class="post-actions"><form method="post" action="{% url 'social:toggle_like' item.post.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="link-button" type="submit">{% if item.liked %}♥ Aimé{% else %}♡ J’aime{% endif %} · {{ item.post.likes.count }}</button></form><span class="muted">{{ item.post.comments.count }} commentaire{{ item.post.comments.count|pluralize:"s" }}</span></div>
+  {% for comment in item.post.comments.all %}<div class="comment"><a href="{% url 'social:profile' comment.author.pk %}">{{ comment.author.get_full_name|default:comment.author.email }}</a> {{ comment.content }}</div>{% endfor %}
+  <form class="comment-form" method="post" action="{% url 'social:add_comment' item.post.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">{{ item.comment_form.content }}<button class="secondary" type="submit">Envoyer</button></form>
+</article>

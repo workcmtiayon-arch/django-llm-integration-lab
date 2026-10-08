@@ -1,0 +1,6 @@
+{% extends "accounts/base.html" %}
+{% block title %}Mes amis{% endblock %}
+{% block content %}
+<p class="eyebrow">VOTRE RÉSEAU</p><h1>Mes amis</h1><p class="muted">{{ friends|length }} relation{{ friends|length|pluralize:"s" }} acceptée{{ friends|length|pluralize:"s" }}.</p>
+<div class="people">{% for person in friends %}<article class="person">{% if person.profile_photo %}<img class="avatar small" src="{{ person.profile_photo.url }}" alt="">{% else %}<span class="avatar small">{{ person.first_name|first|default:person.email|first|upper }}</span>{% endif %}<div class="person-info"><a class="person-name" href="{% url 'social:profile' person.pk %}">{{ person.get_full_name|default:person.email }}</a><div class="muted">{{ person.email }}</div></div><form method="post" action="{% url 'social:remove_friend' person.pk %}" onsubmit="return confirm('Retirer cette personne de vos amis ?')">{% csrf_token %}<button class="secondary" type="submit">Retirer</button></form></article>{% empty %}<div class="empty"><h2>Votre réseau est encore vide</h2><p>Parcourez les membres pour trouver des personnes à ajouter.</p><a class="button" href="{% url 'social:members' %}">Découvrir les membres</a></div>{% endfor %}</div>
+{% endblock %}

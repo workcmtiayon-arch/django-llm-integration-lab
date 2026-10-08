@@ -24,15 +24,63 @@
     .errors { color: #a32121; }
     .avatar { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; background: #e6ebf4; display: grid; place-items: center; font-size: 2rem; }
     .actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1.25rem; }
-    @media (max-width: 520px) { main { margin-top: 1rem; } nav { gap: .75rem; } }
+    h1 { line-height: 1.15; letter-spacing: -.035em; margin: .2rem 0 .5rem; }
+    h2 { letter-spacing: -.02em; }
+    .eyebrow { color: #65748b; font-size: .75rem; font-weight: 800; letter-spacing: .13em; margin: 0 0 .5rem; }
+    .muted { color: #718096; font-size: .9rem; }
+    .page-heading, .person, .post-head, .composer-footer, .post-actions, .public-profile { display: flex; align-items: center; gap: 1rem; }
+    .page-heading { justify-content: space-between; margin-bottom: 1.5rem; }
+    .page-heading p { margin: .35rem 0 0; }
+    .composer, .post { background: #fff; border: 1px solid #e2e7f0; border-radius: 12px; padding: 1.25rem; margin: 1rem 0; }
+    .composer h2 { font-size: 1rem; margin: 0 0 .8rem; }
+    textarea, select, input[type=search], input[type=text] { width: 100%; max-width: none; padding: .75rem; border: 1px solid #bbc5d5; border-radius: 8px; font: inherit; background: white; }
+    .composer-footer { justify-content: space-between; margin-top: .75rem; }
+    .composer-footer select { max-width: 260px; }
+    .secondary { background: #edf2fb; color: #294b91; }
+    .avatar { flex: 0 0 auto; color: #425575; font-weight: 700; }
+    .avatar.small { width: 44px; height: 44px; font-size: 1rem; }
+    .avatar.tiny { width: 38px; height: 38px; font-size: .9rem; }
+    .avatar.large { width: 104px; height: 104px; font-size: 2rem; }
+    .person-info { flex: 1; min-width: 0; }
+    .person-name { color: #172033; font-weight: 700; text-decoration: none; }
+    .person-name:hover { text-decoration: underline; }
+    .people { margin-top: 1.25rem; }
+    .person { padding: .85rem 0; border-bottom: 1px solid #edf0f5; }
+    .person:last-child { border-bottom: 0; }
+    .badge { border-radius: 999px; background: #e6f5eb; color: #267342; font-size: .8rem; font-weight: 700; padding: .35rem .7rem; }
+    .search { display: flex; gap: .6rem; margin: 1.25rem 0; }
+    .search input { flex: 1; }
+    .post { padding: 1.25rem; }
+    .post-head { align-items: flex-start; }
+    .post-content { white-space: normal; overflow-wrap: anywhere; margin: 1rem 0; }
+    .post-actions { padding: .6rem 0; border-top: 1px solid #edf0f5; border-bottom: 1px solid #edf0f5; }
+    .link-button { background: none; color: #385a9d; padding: .25rem; }
+    .link-button.danger { color: #aa3540; }
+    .push { margin-left: auto; }
+    .comment { padding: .5rem 0; font-size: .92rem; }
+    .comment a { font-weight: 700; text-decoration: none; color: #27334a; }
+    .comment-form { display: flex; gap: .5rem; margin-top: .5rem; }
+    .comment-form input { flex: 1; min-width: 0; }
+    .comment-form button { white-space: nowrap; }
+    .inline-actions { display: flex; gap: .5rem; }
+    .empty { text-align: center; padding: 2rem 1rem; }
+    .public-profile { align-items: flex-start; padding-bottom: 1rem; border-bottom: 1px solid #e2e7f0; }
+    .public-profile h1 { overflow-wrap: anywhere; }
+    .public-profile form { margin-top: .8rem; }
+    main { max-width: 760px; }
+    @media (max-width: 520px) { main { margin-top: 1rem; } nav { gap: .75rem; } .page-heading, .public-profile { align-items: flex-start; flex-wrap: wrap; } .comment-form { flex-wrap: wrap; } .comment-form button { margin-left: auto; } }
   </style>
 </head>
 <body>
   <header>
     <nav aria-label="Navigation principale">
-      <a href="{% url 'accounts:profile' %}">Formation AI</a>
+      <a href="{% if user.is_authenticated %}{% url 'social:feed' %}{% else %}{% url 'accounts:login' %}{% endif %}">Formation AI</a>
       {% if user.is_authenticated %}
-        <a href="{% url 'accounts:profile' %}">Profil</a>
+        <a href="{% url 'social:feed' %}">Fil d’actualité</a>
+        <a href="{% url 'social:members' %}">Membres</a>
+        <a href="{% url 'social:friends' %}">Mes amis</a>
+        <a href="{% url 'social:requests' %}">Invitations{% if pending_request_count %} ({{ pending_request_count }}){% endif %}</a>
+        <a href="{% url 'accounts:profile' %}">Mon compte</a>
         <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button type="submit">Déconnexion</button></form>
       {% else %}
         <a href="{% url 'accounts:login' %}">Connexion</a>
