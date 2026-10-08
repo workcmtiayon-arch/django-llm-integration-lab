@@ -72,6 +72,9 @@ class PostLike(TimeStampedModel):
     class Meta:
         constraints = [models.UniqueConstraint(fields=("post", "user"), name="unique_post_like")]
 
+    def __str__(self):
+        return f"{self.user} aime {self.post}"
+
 
 class Comment(TimeStampedModel):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
@@ -80,6 +83,9 @@ class Comment(TimeStampedModel):
 
     class Meta:
         ordering = ("created_at",)
+
+    def __str__(self):
+        return f"Commentaire de {self.author} sur {self.post}"
 
 
 class PostReport(TimeStampedModel):
@@ -91,8 +97,10 @@ class PostReport(TimeStampedModel):
 
     class Meta:
         ordering = ("-created_at",)
-        indexes = [models.Index(fields=("recipient", "read_at", "-created_at"), name="social_notification_idx")]
         constraints = [models.UniqueConstraint(fields=("reporter", "post"), name="unique_post_report")]
+
+    def __str__(self):
+        return f"Signalement {self.get_status_display()} : {self.post}"
 
 
 class Notification(TimeStampedModel):
@@ -114,4 +122,8 @@ class Notification(TimeStampedModel):
 
     class Meta:
         ordering = ("-created_at",)
+        indexes = [models.Index(fields=("recipient", "read_at", "-created_at"), name="social_notification_idx")]
         constraints = [models.UniqueConstraint(fields=("recipient", "actor", "kind", "friendship_request", "post"), name="unique_social_notification")]
+
+    def __str__(self):
+        return f"{self.get_kind_display()} pour {self.recipient}"
