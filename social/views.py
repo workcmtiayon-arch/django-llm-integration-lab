@@ -82,8 +82,20 @@ def members(request):
 
 @login_required
 def friends(request):
+    query = request.GET.get("q", "").strip()
+    people = _accepted_friends(request.user).order_by("first_name", "last_name", "email")
+    if query:
+        people = people.filter(
+            Q(first_name__icontains=query)
+            | Q(last_name__icontains=query)
+            | Q(email__icontains=query)
+        )
+    page = Paginator(people, 20).get_page(request.GET.get("page"))
     return render(request, "social/friends.html", {
-        "friends": _accepted_friends(request.user),
+        "friends": page,
+        "query": query,
+        "page_obj": page,
+        "friend_count": page.paginator.count,
         "pending_request_count": FriendshipRequest.objects.filter(recipient=request.user, status=FriendshipStatus.PENDING).count(),
     })
 
