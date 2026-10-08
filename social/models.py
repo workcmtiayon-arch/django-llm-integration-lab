@@ -8,6 +8,7 @@ from django.db.models import Q
 from .core.models import TimeStampedModel
 from .utils.enums import FriendshipStatus, PostVisibility, ReportReason, ReportStatus
 from accounts.validators import validate_profile_image
+from .storage import private_post_storage
 
 
 def post_image_upload_path(instance, filename):
@@ -48,7 +49,12 @@ class FriendshipRequest(TimeStampedModel):
 class Post(TimeStampedModel):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posts")
     content = models.TextField(max_length=5000)
-    image = models.ImageField(upload_to=post_image_upload_path, blank=True, validators=[validate_profile_image])
+    image = models.ImageField(
+        upload_to=post_image_upload_path,
+        blank=True,
+        validators=[validate_profile_image],
+        storage=private_post_storage,
+    )
     last_edited_at = models.DateTimeField(null=True, blank=True)
     visibility = models.CharField(
         max_length=10, choices=PostVisibility.choices, default=PostVisibility.PUBLIC,

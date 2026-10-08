@@ -151,6 +151,8 @@ Après connexion, le fil d’actualité est accessible à `/`. Les membres peuve
 
 Les opérations d’écriture utilisent des requêtes POST protégées par CSRF. Les vues vérifient l’identité de l’auteur avant modification ou suppression, le destinataire avant réponse à une invitation et les relations d’amitié avant l’accès aux publications réservées. Les modérateurs traitent les signalements dans l’interface d’administration. Les permissions Django comprennent `social.moderate_post` pour gérer les publications et commentaires.
 
+Les images de publication sont conservées dans `PRIVATE_MEDIA_ROOT`, hors du dossier média servi publiquement. Leur route vérifie l’accès à la publication avant de retourner le fichier. En production, configurez ce stockage privé sur un disque protégé ou un stockage objet privé.
+
 Après mise à jour du dépôt, appliquez les migrations avec `python manage.py migrate`.
 
 ## Sécurité

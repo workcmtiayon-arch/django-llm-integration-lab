@@ -15,6 +15,7 @@ urlpatterns = [
     path("notifications/<int:notification_id>/ouvrir/", views.open_notification, name="open_notification"),
     path("profil/<int:user_id>/", views.public_profile, name="profile"),
     path("publications/<int:post_id>/", views.post_detail, name="post_detail"),
+    path("publications/<int:post_id>/image/", views.post_image, name="post_image"),
     path("publications/creer/", views.create_post, name="create_post"),
     path("publications/<int:post_id>/supprimer/", views.delete_post, name="delete_post"),
     path("publications/<int:post_id>/modifier/", views.edit_post, name="edit_post"),

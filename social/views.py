@@ -3,7 +3,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import CharField, Q, Value
 from django.db.models.functions import Concat
-from django.http import Http404
+import mimetypes
+
+from django.http import FileResponse, Http404
 from django.core.paginator import Paginator
 from django.db.models import Count, Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
@@ -235,6 +237,20 @@ def post_detail(request, post_id):
     return render(request, "social/post_detail.html", {
         "feed_posts": _post_context([post], request.user),
     })
+
+
+@login_required
+def post_image(request, post_id):
+    post = get_object_or_404(Post.objects.select_related("author"), pk=post_id)
+    if not post.image or not can_view_post(request.user, post):
+        raise Http404
+    image_file = post.image.storage.open(post.image.name, "rb")
+    response = FileResponse(
+        image_file,
+        content_type=mimetypes.guess_type(post.image.name)[0] or "application/octet-stream",
+    )
+    response["Cache-Control"] = "private, no-store"
+    return response
 
 
 @login_required
