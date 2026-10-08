@@ -27,6 +27,12 @@ def _safe_next(request, fallback):
     return fallback
 
 
+def _pagination_query(request):
+    parameters = request.GET.copy()
+    parameters.pop("page", None)
+    return parameters.urlencode()
+
+
 def _accepted_friends(user):
     sent = FriendshipRequest.objects.filter(sender=user, status=FriendshipStatus.ACCEPTED).values_list("recipient_id", flat=True)
     received = FriendshipRequest.objects.filter(recipient=user, status=FriendshipStatus.ACCEPTED).values_list("sender_id", flat=True)
@@ -50,6 +56,7 @@ def feed(request):
         "post_form": PostForm(),
         "feed_posts": _post_context(page.object_list, request.user),
         "page_obj": page,
+        "pagination_query": _pagination_query(request),
         "friend_count": _accepted_friends(request.user).count(),
         "pending_request_count": FriendshipRequest.objects.filter(recipient=request.user, status=FriendshipStatus.PENDING).count(),
     }
@@ -95,6 +102,7 @@ def friends(request):
         "friends": page,
         "query": query,
         "page_obj": page,
+        "pagination_query": _pagination_query(request),
         "friend_count": page.paginator.count,
         "pending_request_count": FriendshipRequest.objects.filter(recipient=request.user, status=FriendshipStatus.PENDING).count(),
     })
@@ -151,6 +159,7 @@ def public_profile(request, user_id):
         "relationship": relationship,
         "profile_posts": _post_context(page.object_list, request.user),
         "page_obj": page,
+        "pagination_query": _pagination_query(request),
         "pending_request_count": FriendshipRequest.objects.filter(recipient=request.user, status=FriendshipStatus.PENDING).count(),
     })
 
