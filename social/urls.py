@@ -7,6 +7,7 @@ app_name = "social"
 urlpatterns = [
     path("", views.feed, name="feed"),
     path("membres/", views.members, name="members"),
+    path("publications/", views.explore_posts, name="explore_posts"),
     path("amis/", views.friends, name="friends"),
     path("invitations/", views.requests, name="requests"),
     path("notifications/", views.notifications, name="notifications"),

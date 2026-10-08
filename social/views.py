@@ -107,6 +107,29 @@ def members(request):
 
 
 @login_required
+def explore_posts(request):
+    query = request.GET.get("q", "").strip()
+    friends = _accepted_friends(request.user).values_list("pk", flat=True)
+    posts = Post.objects.filter(
+        Q(visibility=PostVisibility.PUBLIC)
+        | Q(author=request.user)
+        | Q(author_id__in=friends),
+    ).select_related("author")
+    if query:
+        posts = posts.filter(content__icontains=query)
+    page = Paginator(_with_engagement(posts), 20).get_page(request.GET.get("page"))
+    return render(request, "social/explore.html", {
+        "query": query,
+        "feed_posts": _post_context(page.object_list, request.user),
+        "page_obj": page,
+        "pagination_query": _pagination_query(request),
+        "pending_request_count": FriendshipRequest.objects.filter(
+            recipient=request.user, status=FriendshipStatus.PENDING
+        ).count(),
+    })
+
+
+@login_required
 def friends(request):
     query = request.GET.get("q", "").strip()
     people = _accepted_friends(request.user).order_by("first_name", "last_name", "email")

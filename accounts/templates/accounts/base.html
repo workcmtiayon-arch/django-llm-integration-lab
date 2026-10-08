@@ -84,6 +84,7 @@
       {% if user.is_authenticated %}
         <a href="{% url 'social:feed' %}">Fil d’actualité</a>
         <a href="{% url 'social:members' %}">Membres</a>
+        <a href="{% url 'social:explore_posts' %}">Explorer</a>
         <a href="{% url 'social:friends' %}">Mes amis</a>
         <a href="{% url 'social:requests' %}">Invitations{% if pending_request_count %} ({{ pending_request_count }}){% endif %}</a>
         <a href="{% url 'social:notifications' %}">Notifications{% if unread_social_notification_count %} ({{ unread_social_notification_count }}){% endif %}</a>
