@@ -50,6 +50,7 @@
     .person { padding: .85rem 0; border-bottom: 1px solid #edf0f5; }
     .person:last-child { border-bottom: 0; }
     .badge { border-radius: 999px; background: #e6f5eb; color: #267342; font-size: .8rem; font-weight: 700; padding: .35rem .7rem; }
+    .notification-unread { background: #f5f8ff; padding-left: .75rem; border-radius: 8px; }
     .search { display: flex; gap: .6rem; margin: 1.25rem 0; }
     .search input { flex: 1; }
     .post { padding: 1.25rem; }
@@ -82,6 +83,7 @@
         <a href="{% url 'social:members' %}">Membres</a>
         <a href="{% url 'social:friends' %}">Mes amis</a>
         <a href="{% url 'social:requests' %}">Invitations{% if pending_request_count %} ({{ pending_request_count }}){% endif %}</a>
+        <a href="{% url 'social:notifications' %}">Notifications{% if unread_social_notification_count %} ({{ unread_social_notification_count }}){% endif %}</a>
         <a href="{% url 'accounts:profile' %}">Mon compte</a>
         <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button type="submit">Déconnexion</button></form>
       {% else %}

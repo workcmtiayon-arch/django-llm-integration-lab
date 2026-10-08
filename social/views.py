@@ -6,7 +6,6 @@ from django.http import Http404
 from django.core.paginator import Paginator
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
@@ -90,10 +89,22 @@ def friends(request):
 def requests(request):
     incoming = FriendshipRequest.objects.filter(recipient=request.user, status=FriendshipStatus.PENDING).select_related("sender")
     outgoing = FriendshipRequest.objects.filter(sender=request.user, status=FriendshipStatus.PENDING).select_related("recipient")
-    Notification.objects.filter(recipient=request.user, read_at__isnull=True).update(read_at=timezone.now())
     return render(request, "social/requests.html", {
         "incoming": incoming, "outgoing": outgoing,
         "pending_request_count": incoming.count(),
+    })
+
+
+@login_required
+def notifications(request):
+    notifications_list = Notification.objects.filter(recipient=request.user).select_related(
+        "actor", "friendship_request"
+    )[:100]
+    return render(request, "social/notifications.html", {
+        "notifications_list": notifications_list,
+        "pending_request_count": FriendshipRequest.objects.filter(
+            recipient=request.user, status=FriendshipStatus.PENDING
+        ).count(),
     })
 
 

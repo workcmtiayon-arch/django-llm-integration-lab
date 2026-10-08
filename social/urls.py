@@ -9,6 +9,7 @@ urlpatterns = [
     path("membres/", views.members, name="members"),
     path("amis/", views.friends, name="friends"),
     path("invitations/", views.requests, name="requests"),
+    path("notifications/", views.notifications, name="notifications"),
     path("profil/<int:user_id>/", views.public_profile, name="profile"),
     path("publications/creer/", views.create_post, name="create_post"),
     path("publications/<int:post_id>/supprimer/", views.delete_post, name="delete_post"),

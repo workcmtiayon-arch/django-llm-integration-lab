@@ -1,0 +1,6 @@
+{% extends "accounts/base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<p class="eyebrow">ACTIVITÉ RÉCENTE</p><h1>Notifications</h1>
+<div class="people">{% for notification in notifications_list %}<article class="person{% if not notification.read_at %} notification-unread{% endif %}"><div class="person-info">{% if notification.kind == "friend_request" %}<a href="{% url 'social:profile' notification.actor.pk %}">{{ notification.actor.get_full_name|default:notification.actor.email }}</a> vous a envoyé une invitation.{% else %}<a href="{% url 'social:profile' notification.actor.pk %}">{{ notification.actor.get_full_name|default:notification.actor.email }}</a> a accepté votre invitation.{% endif %}<div class="muted">{{ notification.created_at|date:"d/m/Y à H:i" }}{% if not notification.read_at %} · Non lue{% endif %}</div></div>{% if notification.kind == "friend_request" and notification.friendship_request.status == "pending" %}<a class="button secondary" href="{% url 'social:requests' %}">Répondre</a>{% endif %}</article>{% empty %}<div class="empty"><h2>Tout est calme</h2><p>Vos nouvelles interactions apparaîtront ici.</p></div>{% endfor %}</div>
+{% endblock %}
