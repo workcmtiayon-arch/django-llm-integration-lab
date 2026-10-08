@@ -2,5 +2,5 @@
 {% block title %}Modifier une publication{% endblock %}
 {% block content %}
 <p class="eyebrow">PUBLICATION</p><h1>Modifier votre publication</h1>
-<form method="post" class="composer">{% csrf_token %}{{ form.as_p }}<div class="actions"><button type="submit">Enregistrer</button><a class="button secondary" href="{% url 'social:feed' %}">Annuler</a></div></form>
+<form method="post" enctype="multipart/form-data" class="composer">{% csrf_token %}{{ form.as_p }}<div class="actions"><button type="submit">Enregistrer</button><a class="button secondary" href="{% url 'social:feed' %}">Annuler</a></div></form>
 {% endblock %}

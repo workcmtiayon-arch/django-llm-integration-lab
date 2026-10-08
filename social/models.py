@@ -1,9 +1,19 @@
+from uuid import uuid4
+
+from PIL import Image
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
 
 from .core.models import TimeStampedModel
 from .utils.enums import FriendshipStatus, PostVisibility
+from accounts.validators import validate_profile_image
+
+
+def post_image_upload_path(instance, filename):
+    with Image.open(instance.image.file) as image:
+        extension = {"JPEG": "jpg", "PNG": "png", "WEBP": "webp"}[image.format]
+    return f"posts/{instance.author_id}/{uuid4().hex}.{extension}"
 
 
 class FriendshipRequest(TimeStampedModel):
@@ -34,6 +44,7 @@ class FriendshipRequest(TimeStampedModel):
 class Post(TimeStampedModel):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posts")
     content = models.TextField(max_length=5000)
+    image = models.ImageField(upload_to=post_image_upload_path, blank=True, validators=[validate_profile_image])
     visibility = models.CharField(
         max_length=10, choices=PostVisibility.choices, default=PostVisibility.PUBLIC,
     )
