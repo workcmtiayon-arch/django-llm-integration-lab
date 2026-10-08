@@ -142,11 +142,16 @@ def requests(request):
 
 @login_required
 def notifications(request):
-    notifications_list = Notification.objects.filter(recipient=request.user).select_related(
-        "actor", "friendship_request"
-    )[:100]
+    notifications_page = Paginator(
+        Notification.objects.filter(recipient=request.user).select_related(
+            "actor", "friendship_request"
+        ),
+        20,
+    ).get_page(request.GET.get("page"))
     return render(request, "social/notifications.html", {
-        "notifications_list": notifications_list,
+        "notifications_list": notifications_page,
+        "page_obj": notifications_page,
+        "pagination_query": _pagination_query(request),
         "pending_request_count": FriendshipRequest.objects.filter(
             recipient=request.user, status=FriendshipStatus.PENDING
         ).count(),
