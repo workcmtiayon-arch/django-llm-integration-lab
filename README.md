@@ -9,7 +9,7 @@ Projet de formation Django consacré à l’intégration de fournisseurs de mod�
 - Profil privé avec biographie, modification de l’email et des informations personnelles.
 - Réseau social : invitations d’amitié, gestion des amis et profils publics.
 - Publications texte et image, publiques ou réservées aux amis, fil d’actualité, mentions « J’aime » et commentaires.
-- Notifications lors d’une invitation et de son acceptation.
+- Notifications lors d’une invitation, de son acceptation, d’un « J’aime » ou d’un commentaire.
 - Photo de profil JPEG, PNG ou WebP (5 Mo maximum), avec vérification du contenu et nom de fichier généré par l’application.
 - Changement et réinitialisation de mot de passe avec les vues et jetons natifs Django.
 - Protection CSRF, contrôle des redirections de connexion, routes privées et messages utilisateur.

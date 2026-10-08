@@ -77,15 +77,19 @@ class Notification(TimeStampedModel):
     class Kind(models.TextChoices):
         FRIEND_REQUEST = "friend_request", "Invitation reçue"
         FRIEND_ACCEPTED = "friend_accepted", "Invitation acceptée"
+        POST_LIKE = "post_like", "Publication aimée"
+        POST_COMMENT = "post_comment", "Nouveau commentaire"
 
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="social_notifications")
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="social_actions")
     kind = models.CharField(max_length=20, choices=Kind.choices)
     friendship_request = models.ForeignKey(
         FriendshipRequest, on_delete=models.CASCADE, related_name="notifications",
+        null=True, blank=True,
     )
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="notifications", null=True, blank=True)
     read_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ("-created_at",)
-        constraints = [models.UniqueConstraint(fields=("recipient", "actor", "kind", "friendship_request"), name="unique_social_notification")]
+        constraints = [models.UniqueConstraint(fields=("recipient", "actor", "kind", "friendship_request", "post"), name="unique_social_notification")]

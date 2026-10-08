@@ -2,7 +2,7 @@ from django.db import transaction
 from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
 
-from social.models import FriendshipRequest, Notification, Post
+from social.models import Comment, FriendshipRequest, Notification, Post, PostLike
 from .enums import FriendshipStatus
 
 
@@ -49,3 +49,25 @@ def remember_deleted_post_image(sender, instance, **kwargs):
         storage = instance.image.storage
         name = instance.image.name
         transaction.on_commit(lambda: storage.delete(name))
+
+
+@receiver(post_save, sender=PostLike)
+def notify_post_author_on_like(sender, instance, created, **kwargs):
+    if created and instance.post.author_id != instance.user_id:
+        Notification.objects.get_or_create(
+            recipient=instance.post.author,
+            actor=instance.user,
+            kind=Notification.Kind.POST_LIKE,
+            post=instance.post,
+        )
+
+
+@receiver(post_save, sender=Comment)
+def notify_post_author_on_comment(sender, instance, created, **kwargs):
+    if created and instance.post.author_id != instance.author_id:
+        Notification.objects.get_or_create(
+            recipient=instance.post.author,
+            actor=instance.author,
+            kind=Notification.Kind.POST_COMMENT,
+            post=instance.post,
+        )
