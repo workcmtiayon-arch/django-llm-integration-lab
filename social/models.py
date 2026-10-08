@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import Q
 
 from .core.models import TimeStampedModel
-from .utils.enums import FriendshipStatus, PostVisibility
+from .utils.enums import FriendshipStatus, PostVisibility, ReportReason, ReportStatus
 from accounts.validators import validate_profile_image
 
 
@@ -72,6 +72,18 @@ class Comment(TimeStampedModel):
 
     class Meta:
         ordering = ("created_at",)
+
+
+class PostReport(TimeStampedModel):
+    reporter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="social_reports")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="reports")
+    reason = models.CharField(max_length=20, choices=ReportReason.choices)
+    details = models.CharField(max_length=500, blank=True)
+    status = models.CharField(max_length=12, choices=ReportStatus.choices, default=ReportStatus.OPEN, db_index=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+        constraints = [models.UniqueConstraint(fields=("reporter", "post"), name="unique_post_report")]
 
 
 class Notification(TimeStampedModel):
