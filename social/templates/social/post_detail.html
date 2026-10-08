@@ -1,0 +1,5 @@
+{% extends "accounts/base.html" %}
+{% block title %}Publication{% endblock %}
+{% block content %}
+<p class="eyebrow">PUBLICATION</p><h1>Publication</h1>{% for item in feed_posts %}{% include "social/_post.html" %}{% endfor %}<a href="{% url 'social:feed' %}">Retour au fil</a>
+{% endblock %}

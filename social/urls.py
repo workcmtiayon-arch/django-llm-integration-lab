@@ -12,6 +12,7 @@ urlpatterns = [
     path("notifications/", views.notifications, name="notifications"),
     path("notifications/lues/", views.mark_notifications_read, name="mark_notifications_read"),
     path("profil/<int:user_id>/", views.public_profile, name="profile"),
+    path("publications/<int:post_id>/", views.post_detail, name="post_detail"),
     path("publications/creer/", views.create_post, name="create_post"),
     path("publications/<int:post_id>/supprimer/", views.delete_post, name="delete_post"),
     path("publications/<int:post_id>/modifier/", views.edit_post, name="edit_post"),

@@ -138,6 +138,19 @@ def public_profile(request, user_id):
 
 
 @login_required
+def post_detail(request, post_id):
+    post = get_object_or_404(Post.objects.select_related("author"), pk=post_id)
+    if not can_view_post(request.user, post):
+        raise Http404
+    return render(request, "social/post_detail.html", {
+        "feed_posts": _post_context([post], request.user),
+        "pending_request_count": FriendshipRequest.objects.filter(
+            recipient=request.user, status=FriendshipStatus.PENDING
+        ).count(),
+    })
+
+
+@login_required
 @require_POST
 def create_post(request):
     form = PostForm(request.POST)
