@@ -191,7 +191,7 @@ def post_detail(request, post_id):
 @login_required
 @require_POST
 def create_post(request):
-    form = PostForm(request.POST)
+    form = PostForm(request.POST, request.FILES)
     if form.is_valid():
         post = form.save(commit=False)
         post.author = request.user
@@ -218,7 +218,7 @@ def edit_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     if post.author_id != request.user.pk and not request.user.has_perm("social.moderate_post"):
         raise Http404
-    form = PostForm(request.POST or None, instance=post)
+    form = PostForm(request.POST or None, request.FILES or None, instance=post)
     if request.method == "POST" and form.is_valid():
         form.save()
         messages.success(request, "Votre publication a été modifiée.")
