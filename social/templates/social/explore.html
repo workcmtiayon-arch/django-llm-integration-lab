@@ -2,7 +2,7 @@
 {% block title %}Explorer les publications{% endblock %}
 {% block content %}
 <p class="eyebrow">DÉCOUVRIR</p><h1>Explorer les publications</h1>
-<form class="search" method="get"><input type="search" name="q" value="{{ query }}" placeholder="Rechercher dans les publications" aria-label="Rechercher dans les publications"><button type="submit">Rechercher</button>{% if query %}<a class="button secondary" href="{% url 'social:explore_posts' %}">Effacer</a>{% endif %}</form>
+<form class="search" method="get"><input type="search" name="q" value="{{ query }}" placeholder="Rechercher dans les publications" aria-label="Rechercher dans les publications"><label class="sort-label" for="post-sort">Trier</label><select id="post-sort" name="sort"><option value="recent"{% if sort == "recent" %} selected{% endif %}>Plus récentes</option><option value="popular"{% if sort == "popular" %} selected{% endif %}>Plus aimées</option></select><button type="submit">Rechercher</button>{% if query or sort == "popular" %}<a class="button secondary" href="{% url 'social:explore_posts' %}">Effacer</a>{% endif %}</form>
 {% for item in feed_posts %}{% include "social/_post.html" %}{% empty %}<div class="empty"><h2>Aucune publication trouvée</h2><p>Essayez une autre recherche ou revenez plus tard.</p></div>{% endfor %}
 {% include "social/_pagination.html" %}
 {% endblock %}

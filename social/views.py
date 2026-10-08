@@ -109,6 +109,7 @@ def members(request):
 @login_required
 def explore_posts(request):
     query = request.GET.get("q", "").strip()
+    sort = request.GET.get("sort", "recent")
     friends = _accepted_friends(request.user).values_list("pk", flat=True)
     posts = Post.objects.filter(
         Q(visibility=PostVisibility.PUBLIC)
@@ -117,9 +118,16 @@ def explore_posts(request):
     ).select_related("author")
     if query:
         posts = posts.filter(content__icontains=query)
-    page = Paginator(_with_engagement(posts), 20).get_page(request.GET.get("page"))
+    posts = _with_engagement(posts)
+    if sort == "popular":
+        posts = posts.order_by("-like_count", "-created_at")
+    else:
+        sort = "recent"
+        posts = posts.order_by("-created_at")
+    page = Paginator(posts, 20).get_page(request.GET.get("page"))
     return render(request, "social/explore.html", {
         "query": query,
+        "sort": sort,
         "feed_posts": _post_context(page.object_list, request.user),
         "page_obj": page,
         "pagination_query": _pagination_query(request),
