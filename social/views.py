@@ -93,9 +93,9 @@ def members(request):
     incoming = {r.sender_id: r for r in FriendshipRequest.objects.filter(recipient=request.user, status=FriendshipStatus.PENDING)}
     people = people.prefetch_related(Prefetch(
         "posts",
-        queryset=Post.objects.filter(visibility=PostVisibility.PUBLIC).only(
+        queryset=Post.objects.filter(visibility=PostVisibility.PUBLIC).order_by("-created_at").only(
             "id", "author_id", "content", "created_at", "visibility"
-        ),
+        )[:1],
         to_attr="public_posts",
     ))
     page = Paginator(people, 20).get_page(request.GET.get("page"))
