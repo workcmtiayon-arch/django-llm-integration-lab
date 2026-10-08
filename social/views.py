@@ -70,7 +70,6 @@ def feed(request):
         "page_obj": page,
         "pagination_query": _pagination_query(request),
         "friend_count": _accepted_friends(request.user).count(),
-        "pending_request_count": FriendshipRequest.objects.filter(recipient=request.user, status=FriendshipStatus.PENDING).count(),
     }
     return render(request, "social/feed.html", context)
 
@@ -102,7 +101,6 @@ def members(request):
     return render(request, "social/members.html", {
         "people": page, "query": query, "friend_ids": friend_ids,
         "outgoing_ids": set(sent), "incoming_ids": set(incoming),
-        "pending_request_count": len(incoming),
     })
 
 
@@ -131,9 +129,6 @@ def explore_posts(request):
         "feed_posts": _post_context(page.object_list, request.user),
         "page_obj": page,
         "pagination_query": _pagination_query(request),
-        "pending_request_count": FriendshipRequest.objects.filter(
-            recipient=request.user, status=FriendshipStatus.PENDING
-        ).count(),
     })
 
 
@@ -157,7 +152,6 @@ def friends(request):
         "page_obj": page,
         "pagination_query": _pagination_query(request),
         "friend_count": page.paginator.count,
-        "pending_request_count": FriendshipRequest.objects.filter(recipient=request.user, status=FriendshipStatus.PENDING).count(),
     })
 
 
@@ -167,7 +161,6 @@ def requests(request):
     outgoing = FriendshipRequest.objects.filter(sender=request.user, status=FriendshipStatus.PENDING).select_related("recipient")
     return render(request, "social/requests.html", {
         "incoming": incoming, "outgoing": outgoing,
-        "pending_request_count": incoming.count(),
     })
 
 
@@ -183,9 +176,6 @@ def notifications(request):
         "notifications_list": notifications_page,
         "page_obj": notifications_page,
         "pagination_query": _pagination_query(request),
-        "pending_request_count": FriendshipRequest.objects.filter(
-            recipient=request.user, status=FriendshipStatus.PENDING
-        ).count(),
     })
 
 
@@ -234,7 +224,6 @@ def public_profile(request, user_id):
         "pagination_query": _pagination_query(request),
         "profile_post_count": page.paginator.count,
         "profile_friend_count": _accepted_friends(profile_user).count(),
-        "pending_request_count": FriendshipRequest.objects.filter(recipient=request.user, status=FriendshipStatus.PENDING).count(),
     })
 
 
@@ -245,9 +234,6 @@ def post_detail(request, post_id):
         raise Http404
     return render(request, "social/post_detail.html", {
         "feed_posts": _post_context([post], request.user),
-        "pending_request_count": FriendshipRequest.objects.filter(
-            recipient=request.user, status=FriendshipStatus.PENDING
-        ).count(),
     })
 
 
@@ -291,7 +277,6 @@ def edit_post(request, post_id):
     return render(request, "social/edit_post.html", {
         "form": form,
         "post": post,
-        "pending_request_count": FriendshipRequest.objects.filter(recipient=request.user, status=FriendshipStatus.PENDING).count(),
     })
 
 
@@ -430,7 +415,4 @@ def edit_comment(request, comment_id):
     return render(request, "social/edit_comment.html", {
         "form": form,
         "comment": comment,
-        "pending_request_count": FriendshipRequest.objects.filter(
-            recipient=request.user, status=FriendshipStatus.PENDING
-        ).count(),
     })
