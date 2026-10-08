@@ -10,6 +10,7 @@ Projet de formation Django consacré à l’intégration de fournisseurs de mod�
 - Réseau social : invitations d’amitié, gestion des amis et profils publics.
 - Publications texte et image, publiques ou réservées aux amis, fil d’actualité, mentions « J’aime » et commentaires.
 - Notifications lors d’une invitation, de son acceptation, d’un « J’aime » ou d’un commentaire.
+- Signalement des publications et traitement des signalements depuis l’administration Django.
 - Photo de profil JPEG, PNG ou WebP (5 Mo maximum), avec vérification du contenu et nom de fichier généré par l’application.
 - Changement et réinitialisation de mot de passe avec les vues et jetons natifs Django.
 - Protection CSRF, contrôle des redirections de connexion, routes privées et messages utilisateur.
@@ -148,7 +149,7 @@ Après connexion, le fil d’actualité est accessible à `/`. Les membres peuve
 | `/invitations/` | Acceptation, refus ou annulation des invitations |
 | `/profil/<id>/` | Profil public et publications visibles de ce membre |
 
-Les opérations d’écriture utilisent des requêtes POST protégées par CSRF. Les vues vérifient l’identité de l’auteur avant modification ou suppression, le destinataire avant réponse à une invitation et les relations d’amitié avant l’accès aux publications réservées. Les permissions Django comprennent `social.moderate_post` pour la modération.
+Les opérations d’écriture utilisent des requêtes POST protégées par CSRF. Les vues vérifient l’identité de l’auteur avant modification ou suppression, le destinataire avant réponse à une invitation et les relations d’amitié avant l’accès aux publications réservées. Les modérateurs traitent les signalements dans l’interface d’administration. Les permissions Django comprennent `social.moderate_post` pour gérer les publications et commentaires.
 
 Après mise à jour du dépôt, appliquez les migrations avec `python manage.py migrate`.
 

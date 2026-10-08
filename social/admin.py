@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Comment, FriendshipRequest, Notification, Post, PostLike
+from .models import Comment, FriendshipRequest, Notification, Post, PostLike, PostReport
 
 
 @admin.register(FriendshipRequest)
@@ -39,3 +39,24 @@ class NotificationAdmin(admin.ModelAdmin):
     list_filter = ("kind", "read_at")
     search_fields = ("recipient__email", "actor__email")
     readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(PostReport)
+class PostReportAdmin(admin.ModelAdmin):
+    list_display = ("post", "reporter", "reason", "status", "created_at")
+    list_filter = ("status", "reason", "created_at")
+    search_fields = ("reporter__email", "post__author__email", "post__content", "details")
+    readonly_fields = ("reporter", "post", "reason", "details", "created_at", "updated_at")
+    actions = ("mark_reviewing", "mark_resolved", "dismiss_reports")
+
+    @admin.action(description="Marquer les signalements en cours d’examen")
+    def mark_reviewing(self, request, queryset):
+        queryset.update(status="reviewing")
+
+    @admin.action(description="Marquer les signalements comme traités")
+    def mark_resolved(self, request, queryset):
+        queryset.update(status="resolved")
+
+    @admin.action(description="Classer les signalements sans suite")
+    def dismiss_reports(self, request, queryset):
+        queryset.update(status="dismissed")
