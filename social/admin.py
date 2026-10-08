@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django import forms
 
 from .models import Comment, FriendshipRequest, Notification, Post, PostLike, PostReport
 
@@ -17,13 +18,25 @@ class CommentInline(admin.TabularInline):
     readonly_fields = ("created_at", "updated_at")
 
 
+class PostAdminForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = "__all__"
+        widgets = {"image": forms.FileInput}
+
+
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
+    form = PostAdminForm
     list_display = ("author", "visibility", "created_at")
     list_filter = ("visibility", "created_at")
     search_fields = ("author__email", "content")
-    readonly_fields = ("created_at", "updated_at")
+    readonly_fields = ("created_at", "updated_at", "image_name")
     inlines = (CommentInline,)
+
+    @admin.display(description="Fichier image privé")
+    def image_name(self, obj):
+        return obj.image.name or "—"
 
 
 @admin.register(PostLike)

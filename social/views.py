@@ -286,6 +286,8 @@ def edit_post(request, post_id):
     form = PostForm(request.POST or None, request.FILES or None, instance=post)
     if request.method == "POST" and form.is_valid():
         post = form.save(commit=False)
+        if form.cleaned_data["remove_image"] and not form.cleaned_data.get("image"):
+            post.image = ""
         post.last_edited_at = timezone.now()
         post.save()
         messages.success(request, "Votre publication a été modifiée.")

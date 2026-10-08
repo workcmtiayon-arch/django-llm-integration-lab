@@ -4,11 +4,19 @@ from .models import Comment, Post, PostReport
 
 
 class PostForm(forms.ModelForm):
+    remove_image = forms.BooleanField(
+        label="Supprimer l’image actuelle",
+        required=False,
+    )
+
     class Meta:
         model = Post
         fields = ("content", "image", "visibility")
         labels = {"content": "Quoi de neuf ?", "image": "Ajouter une image", "visibility": "Qui peut voir cette publication ?"}
-        widgets = {"content": forms.Textarea(attrs={"rows": 4, "placeholder": "Partagez une idée, une réussite ou une question…"})}
+        widgets = {
+            "content": forms.Textarea(attrs={"rows": 4, "placeholder": "Partagez une idée, une réussite ou une question…"}),
+            "image": forms.FileInput,
+        }
 
     def clean_content(self):
         content = self.cleaned_data["content"].strip()
