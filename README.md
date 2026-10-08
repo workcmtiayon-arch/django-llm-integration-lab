@@ -6,7 +6,7 @@ Projet de formation Django consacré à l’intégration de fournisseurs de mod�
 
 - Inscription avec adresse email normalisée et connexion insensible à la casse, ainsi que la validation native des mots de passe Django.
 - Connexion par email, déconnexion par POST et gestion des sessions Django.
-- Profil privé, modification de l’email et des informations personnelles.
+- Profil privé avec biographie, modification de l’email et des informations personnelles.
 - Réseau social : invitations d’amitié, gestion des amis et profils publics.
 - Publications publiques ou réservées aux amis, fil d’actualité, mentions « J’aime » et commentaires.
 - Notifications lors d’une invitation et de son acceptation.

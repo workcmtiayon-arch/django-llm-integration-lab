@@ -6,6 +6,7 @@
 <dl>
   <dt>Prénom</dt><dd>{{ user.first_name|default:"—" }}</dd>
   <dt>Nom</dt><dd>{{ user.last_name|default:"—" }}</dd>
+  <dt>À propos</dt><dd>{{ user.bio|default:"—" }}</dd>
   <dt>Email</dt><dd>{{ user.email }}</dd>
   <dt>Inscrit le</dt><dd>{{ user.date_joined|date:"d/m/Y" }}</dd>
 </dl>

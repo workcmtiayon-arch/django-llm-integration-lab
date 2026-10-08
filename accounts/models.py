@@ -52,6 +52,7 @@ class User(AbstractUser):
         blank=True,
         validators=[validate_profile_image],
     )
+    bio = models.CharField("biography", max_length=280, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = "email"

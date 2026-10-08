@@ -14,7 +14,7 @@ class RegistrationForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ("email", "first_name", "last_name")
+        fields = ("email", "first_name", "last_name", "bio")
 
     def clean_email(self):
         email = User.objects.normalize_email(self.cleaned_data["email"].strip()).casefold()
