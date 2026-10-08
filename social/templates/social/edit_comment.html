@@ -1,0 +1,6 @@
+{% extends "accounts/base.html" %}
+{% block title %}Modifier le commentaire{% endblock %}
+{% block content %}
+<p class="eyebrow">COMMENTAIRE</p><h1>Modifier votre commentaire</h1>
+<form class="composer" method="post">{% csrf_token %}{{ form.as_p }}<div class="actions"><button type="submit">Enregistrer</button><a class="button secondary" href="{% url 'social:post_detail' comment.post.pk %}">Annuler</a></div></form>
+{% endblock %}

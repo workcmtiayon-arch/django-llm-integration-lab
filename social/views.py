@@ -293,3 +293,22 @@ def delete_comment(request, comment_id):
     comment.delete()
     messages.success(request, "Le commentaire a été supprimé.")
     return redirect(_safe_next(request, "social:feed"))
+
+
+@login_required
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, pk=comment_id)
+    if comment.author_id != request.user.pk:
+        raise Http404
+    form = CommentForm(request.POST or None, instance=comment)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Le commentaire a été modifié.")
+        return redirect(_safe_next(request, "social:feed"))
+    return render(request, "social/edit_comment.html", {
+        "form": form,
+        "comment": comment,
+        "pending_request_count": FriendshipRequest.objects.filter(
+            recipient=request.user, status=FriendshipStatus.PENDING
+        ).count(),
+    })
