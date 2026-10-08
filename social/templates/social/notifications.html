@@ -1,6 +1,34 @@
 {% extends "accounts/base.html" %}
 {% block title %}Notifications{% endblock %}
 {% block content %}
-<p class="eyebrow">ACTIVITÉ RÉCENTE</p><div class="page-heading"><h1>Notifications</h1><form method="post" action="{% url 'social:mark_notifications_read' %}">{% csrf_token %}<button class="secondary" type="submit">Tout marquer comme lu</button></form></div>
-<div class="people">{% for notification in notifications_list %}<article class="person{% if not notification.read_at %} notification-unread{% endif %}"><div class="person-info">{% if notification.kind == "friend_request" %}<a href="{% url 'social:profile' notification.actor.pk %}">{{ notification.actor.get_full_name|default:notification.actor.email }}</a> vous a envoyé une invitation.{% elif notification.kind == "friend_accepted" %}<a href="{% url 'social:profile' notification.actor.pk %}">{{ notification.actor.get_full_name|default:notification.actor.email }}</a> a accepté votre invitation.{% elif notification.kind == "post_like" %}<a href="{% url 'social:profile' notification.actor.pk %}">{{ notification.actor.get_full_name|default:notification.actor.email }}</a> a aimé votre publication.{% else %}<a href="{% url 'social:profile' notification.actor.pk %}">{{ notification.actor.get_full_name|default:notification.actor.email }}</a> a commenté votre publication.{% endif %}<div class="muted">{{ notification.created_at|date:"d/m/Y à H:i" }}{% if not notification.read_at %} · Non lue{% endif %}</div></div>{% if notification.kind == "friend_request" and notification.friendship_request.status == "pending" %}<a class="button secondary" href="{% url 'social:requests' %}">Répondre</a>{% elif notification.post %}<a class="button secondary" href="{% url 'social:post_detail' notification.post.pk %}">Voir la publication</a>{% endif %}</article>{% empty %}<div class="empty"><h2>Tout est calme</h2><p>Vos nouvelles interactions apparaîtront ici.</p></div>{% endfor %}</div>
+<p class="eyebrow">ACTIVITÉ RÉCENTE</p>
+<div class="page-heading">
+  <h1>Notifications</h1>
+  <form method="post" action="{% url 'social:mark_notifications_read' %}">
+    {% csrf_token %}<button class="secondary" type="submit">Tout marquer comme lu</button>
+  </form>
+</div>
+<div class="people">
+  {% for notification in notifications_list %}
+    <article class="person{% if not notification.read_at %} notification-unread{% endif %}">
+      <div class="person-info">
+        {% if notification.kind == "friend_request" %}
+          <a href="{% url 'social:profile' notification.actor.pk %}">{{ notification.actor.get_full_name|default:notification.actor.email }}</a> vous a envoyé une invitation.
+        {% elif notification.kind == "friend_accepted" %}
+          <a href="{% url 'social:profile' notification.actor.pk %}">{{ notification.actor.get_full_name|default:notification.actor.email }}</a> a accepté votre invitation.
+        {% elif notification.kind == "post_like" %}
+          <a href="{% url 'social:profile' notification.actor.pk %}">{{ notification.actor.get_full_name|default:notification.actor.email }}</a> a aimé votre publication.
+        {% else %}
+          <a href="{% url 'social:profile' notification.actor.pk %}">{{ notification.actor.get_full_name|default:notification.actor.email }}</a> a commenté votre publication.
+        {% endif %}
+        <div class="muted">{{ notification.created_at|date:"d/m/Y à H:i" }}{% if not notification.read_at %} · Non lue{% endif %}</div>
+      </div>
+      <form method="post" action="{% url 'social:open_notification' notification.pk %}">
+        {% csrf_token %}<button class="secondary" type="submit">Consulter</button>
+      </form>
+    </article>
+  {% empty %}
+    <div class="empty"><h2>Tout est calme</h2><p>Vos nouvelles interactions apparaîtront ici.</p></div>
+  {% endfor %}
+</div>
 {% endblock %}

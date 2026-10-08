@@ -11,6 +11,7 @@ urlpatterns = [
     path("invitations/", views.requests, name="requests"),
     path("notifications/", views.notifications, name="notifications"),
     path("notifications/lues/", views.mark_notifications_read, name="mark_notifications_read"),
+    path("notifications/<int:notification_id>/ouvrir/", views.open_notification, name="open_notification"),
     path("profil/<int:user_id>/", views.public_profile, name="profile"),
     path("publications/<int:post_id>/", views.post_detail, name="post_detail"),
     path("publications/creer/", views.create_post, name="create_post"),

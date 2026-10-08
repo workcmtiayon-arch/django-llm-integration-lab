@@ -164,6 +164,20 @@ def mark_notifications_read(request):
 
 
 @login_required
+@require_POST
+def open_notification(request, notification_id):
+    notification = get_object_or_404(Notification, pk=notification_id, recipient=request.user)
+    if not notification.read_at:
+        notification.read_at = timezone.now()
+        notification.save(update_fields=("read_at", "updated_at"))
+    if notification.post_id and can_view_post(request.user, notification.post):
+        return redirect("social:post_detail", post_id=notification.post_id)
+    if notification.friendship_request_id and notification.friendship_request.status == FriendshipStatus.PENDING:
+        return redirect("social:requests")
+    return redirect("social:profile", user_id=notification.actor_id)
+
+
+@login_required
 def public_profile(request, user_id):
     profile_user = get_object_or_404(User, pk=user_id)
     if profile_user == request.user:
