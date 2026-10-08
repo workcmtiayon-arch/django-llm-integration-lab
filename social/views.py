@@ -201,6 +201,8 @@ def public_profile(request, user_id):
         "profile_posts": _post_context(page.object_list, request.user),
         "page_obj": page,
         "pagination_query": _pagination_query(request),
+        "profile_post_count": page.paginator.count,
+        "profile_friend_count": _accepted_friends(profile_user).count(),
         "pending_request_count": FriendshipRequest.objects.filter(recipient=request.user, status=FriendshipStatus.PENDING).count(),
     })
 
