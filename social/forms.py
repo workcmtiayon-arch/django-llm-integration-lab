@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Comment, Post
+from .models import Comment, Post, PostReport
 
 
 class PostForm(forms.ModelForm):
@@ -23,3 +23,11 @@ class CommentForm(forms.ModelForm):
         fields = ("content",)
         labels = {"content": "Commenter"}
         widgets = {"content": forms.TextInput(attrs={"placeholder": "Écrire un commentaire…"})}
+
+
+class PostReportForm(forms.ModelForm):
+    class Meta:
+        model = PostReport
+        fields = ("reason", "details")
+        labels = {"reason": "Motif", "details": "Détails supplémentaires"}
+        widgets = {"details": forms.Textarea(attrs={"rows": 3, "maxlength": 500})}

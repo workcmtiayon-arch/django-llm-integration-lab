@@ -11,8 +11,8 @@ from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
-from .forms import CommentForm, PostForm
-from .models import Comment, FriendshipRequest, Notification, Post, PostLike
+from .forms import CommentForm, PostForm, PostReportForm
+from .models import Comment, FriendshipRequest, Notification, Post, PostLike, PostReport
 from .utils.enums import FriendshipStatus, PostVisibility
 from .utils.permissions import can_view_post
 
@@ -387,6 +387,25 @@ def delete_comment(request, comment_id):
         raise Http404
     comment.delete()
     messages.success(request, "Le commentaire a été supprimé.")
+    return redirect(_safe_next(request, "social:feed"))
+
+
+@login_required
+@require_POST
+def report_post(request, post_id):
+    post = get_object_or_404(Post.objects.select_related("author"), pk=post_id)
+    if post.author_id == request.user.pk or not can_view_post(request.user, post):
+        raise Http404
+    form = PostReportForm(request.POST)
+    if form.is_valid():
+        PostReport.objects.get_or_create(
+            reporter=request.user,
+            post=post,
+            defaults={"reason": form.cleaned_data["reason"], "details": form.cleaned_data["details"]},
+        )
+        messages.success(request, "Merci. Votre signalement a été transmis à l’équipe de modération.")
+    else:
+        messages.error(request, "Choisissez un motif valide pour le signalement.")
     return redirect(_safe_next(request, "social:feed"))
 
 

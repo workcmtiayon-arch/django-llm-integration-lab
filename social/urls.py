@@ -20,6 +20,7 @@ urlpatterns = [
     path("publications/<int:post_id>/modifier/", views.edit_post, name="edit_post"),
     path("publications/<int:post_id>/aimer/", views.toggle_like, name="toggle_like"),
     path("publications/<int:post_id>/commenter/", views.add_comment, name="add_comment"),
+    path("publications/<int:post_id>/signaler/", views.report_post, name="report_post"),
     path("commentaires/<int:comment_id>/supprimer/", views.delete_comment, name="delete_comment"),
     path("commentaires/<int:comment_id>/modifier/", views.edit_comment, name="edit_comment"),
     path("invitations/envoyer/<int:user_id>/", views.send_request, name="send_request"),
