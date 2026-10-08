@@ -5,7 +5,7 @@ from django.db.models import CharField, Q, Value
 from django.db.models.functions import Concat
 from django.http import Http404
 from django.core.paginator import Paginator
-from django.db.models import Prefetch
+from django.db.models import Count, Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -48,10 +48,21 @@ def _post_context(posts, user):
     return [{"post": post, "liked": post.pk in liked_ids, "comment_form": CommentForm()} for post in visible]
 
 
+def _with_engagement(queryset):
+    return queryset.annotate(
+        like_count=Count("likes", distinct=True),
+        comment_count=Count("comments", distinct=True),
+    ).prefetch_related(
+        Prefetch("comments", queryset=Comment.objects.select_related("author"))
+    )
+
+
 @login_required
 def feed(request):
     friends = _accepted_friends(request.user).values_list("pk", flat=True)
-    posts = Post.objects.filter(Q(author=request.user) | Q(author_id__in=friends)).select_related("author")
+    posts = _with_engagement(
+        Post.objects.filter(Q(author=request.user) | Q(author_id__in=friends)).select_related("author")
+    )
     page = Paginator(posts, 20).get_page(request.GET.get("page"))
     context = {
         "post_form": PostForm(),
@@ -164,7 +175,7 @@ def public_profile(request, user_id):
     profile_posts = profile_user.posts.select_related("author")
     if not is_friend:
         profile_posts = profile_posts.filter(visibility=PostVisibility.PUBLIC)
-    page = Paginator(profile_posts, 20).get_page(request.GET.get("page"))
+    page = Paginator(_with_engagement(profile_posts), 20).get_page(request.GET.get("page"))
     return render(request, "social/profile.html", {
         "profile_user": profile_user, "is_friend": is_friend,
         "relationship": relationship,
@@ -177,7 +188,7 @@ def public_profile(request, user_id):
 
 @login_required
 def post_detail(request, post_id):
-    post = get_object_or_404(Post.objects.select_related("author"), pk=post_id)
+    post = get_object_or_404(_with_engagement(Post.objects.select_related("author")), pk=post_id)
     if not can_view_post(request.user, post):
         raise Http404
     return render(request, "social/post_detail.html", {
