@@ -45,6 +45,7 @@ class Post(TimeStampedModel):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posts")
     content = models.TextField(max_length=5000)
     image = models.ImageField(upload_to=post_image_upload_path, blank=True, validators=[validate_profile_image])
+    last_edited_at = models.DateTimeField(null=True, blank=True)
     visibility = models.CharField(
         max_length=10, choices=PostVisibility.choices, default=PostVisibility.PUBLIC,
     )

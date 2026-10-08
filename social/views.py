@@ -252,7 +252,9 @@ def edit_post(request, post_id):
         raise Http404
     form = PostForm(request.POST or None, request.FILES or None, instance=post)
     if request.method == "POST" and form.is_valid():
-        form.save()
+        post = form.save(commit=False)
+        post.last_edited_at = timezone.now()
+        post.save()
         messages.success(request, "Votre publication a été modifiée.")
         return redirect(_safe_next(request, "social:feed"))
     return render(request, "social/edit_post.html", {
