@@ -1,6 +1,6 @@
 <article class="person">
   {% if person.profile_photo %}<img class="avatar small" src="{{ person.profile_photo.url }}" alt="">{% else %}<span class="avatar small">{{ person.first_name|first|default:person.email|first|upper }}</span>{% endif %}
-  <div class="person-info"><a class="person-name" href="{% url 'social:profile' person.pk %}">{{ person.get_full_name|default:person.email }}</a><div class="muted">{{ person.email }}</div></div>
+  <div class="person-info"><a class="person-name" href="{% url 'social:profile' person.pk %}">{{ person.get_full_name|default:person.email }}</a><div class="muted">{{ person.email }}</div>{% if person.public_posts %}<div class="member-post-preview">« {{ person.public_posts.0.content|truncatechars:120 }} »</div>{% else %}<div class="muted">Aucune publication publique</div>{% endif %}</div>
   {% if person.pk in friend_ids %}<span class="badge">Ami</span>
   {% elif person.pk in incoming_ids %}<a class="button secondary" href="{% url 'social:requests' %}">Répondre</a>
   {% elif person.pk in outgoing_ids %}<span class="muted">Invitation envoyée</span>

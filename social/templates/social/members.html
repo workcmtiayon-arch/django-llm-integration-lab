@@ -4,4 +4,5 @@
 <p class="eyebrow">COMMUNAUTÉ</p><h1>Découvrir les membres</h1><p class="muted">Recherchez une personne et envoyez-lui une invitation.</p>
 <form class="search" method="get"><input type="search" name="q" value="{{ query }}" placeholder="Nom ou adresse email" aria-label="Rechercher un membre"><button type="submit">Rechercher</button></form>
 <div class="people">{% for person in people %}{% include "social/_person.html" with person=person %}{% empty %}<p class="empty">Aucun membre trouvé.</p>{% endfor %}</div>
+{% if people.paginator.num_pages > 1 %}<nav class="pagination" aria-label="Pages des membres">{% if people.has_previous %}<a class="button secondary" href="?q={{ query|urlencode }}&page={{ people.previous_page_number }}">Précédent</a>{% endif %}<span class="muted">Page {{ people.number }} sur {{ people.paginator.num_pages }}</span>{% if people.has_next %}<a class="button secondary" href="?q={{ query|urlencode }}&page={{ people.next_page_number }}">Suivant</a>{% endif %}</nav>{% endif %}
 {% endblock %}

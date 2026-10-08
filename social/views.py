@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import Http404
+from django.core.paginator import Paginator
+from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -61,8 +63,16 @@ def members(request):
     friend_ids = set(_accepted_friends(request.user).values_list("pk", flat=True))
     sent = {r.recipient_id: r for r in FriendshipRequest.objects.filter(sender=request.user, status=FriendshipStatus.PENDING)}
     incoming = {r.sender_id: r for r in FriendshipRequest.objects.filter(recipient=request.user, status=FriendshipStatus.PENDING)}
+    people = people.prefetch_related(Prefetch(
+        "posts",
+        queryset=Post.objects.filter(visibility=PostVisibility.PUBLIC).only(
+            "id", "author_id", "content", "created_at", "visibility"
+        ),
+        to_attr="public_posts",
+    ))
+    page = Paginator(people, 20).get_page(request.GET.get("page"))
     return render(request, "social/members.html", {
-        "people": people[:100], "query": query, "friend_ids": friend_ids,
+        "people": page, "query": query, "friend_ids": friend_ids,
         "outgoing_ids": set(sent), "incoming_ids": set(incoming),
         "pending_request_count": len(incoming),
     })
