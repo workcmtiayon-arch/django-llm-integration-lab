@@ -282,3 +282,14 @@ def add_comment(request, post_id):
     else:
         messages.error(request, "Le commentaire ne peut pas être vide.")
     return redirect(_safe_next(request, "social:feed"))
+
+
+@login_required
+@require_POST
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment.objects.select_related("post"), pk=comment_id)
+    if comment.author_id != request.user.pk and not request.user.has_perm("social.moderate_post"):
+        raise Http404
+    comment.delete()
+    messages.success(request, "Le commentaire a été supprimé.")
+    return redirect(_safe_next(request, "social:feed"))
