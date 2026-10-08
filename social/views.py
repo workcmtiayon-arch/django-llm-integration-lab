@@ -1,7 +1,8 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import CharField, Q, Value
+from django.db.models.functions import Concat
 from django.http import Http404
 from django.core.paginator import Paginator
 from django.db.models import Prefetch
@@ -68,7 +69,14 @@ def members(request):
     query = request.GET.get("q", "").strip()
     people = User.objects.exclude(pk=request.user.pk).order_by("first_name", "last_name", "email")
     if query:
-        people = people.filter(Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(email__icontains=query))
+        people = people.annotate(
+            full_name=Concat("first_name", Value(" "), "last_name", output_field=CharField())
+        ).filter(
+            Q(first_name__icontains=query)
+            | Q(last_name__icontains=query)
+            | Q(full_name__icontains=query)
+            | Q(email__icontains=query)
+        )
     friend_ids = set(_accepted_friends(request.user).values_list("pk", flat=True))
     sent = {r.recipient_id: r for r in FriendshipRequest.objects.filter(sender=request.user, status=FriendshipStatus.PENDING)}
     incoming = {r.sender_id: r for r in FriendshipRequest.objects.filter(recipient=request.user, status=FriendshipStatus.PENDING)}
@@ -92,9 +100,12 @@ def friends(request):
     query = request.GET.get("q", "").strip()
     people = _accepted_friends(request.user).order_by("first_name", "last_name", "email")
     if query:
-        people = people.filter(
+        people = people.annotate(
+            full_name=Concat("first_name", Value(" "), "last_name", output_field=CharField())
+        ).filter(
             Q(first_name__icontains=query)
             | Q(last_name__icontains=query)
+            | Q(full_name__icontains=query)
             | Q(email__icontains=query)
         )
     page = Paginator(people, 20).get_page(request.GET.get("page"))
