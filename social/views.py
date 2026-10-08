@@ -44,10 +44,12 @@ def _post_context(posts, user):
 @login_required
 def feed(request):
     friends = _accepted_friends(request.user).values_list("pk", flat=True)
-    posts = Post.objects.filter(Q(author=request.user) | Q(author_id__in=friends)).select_related("author")[:100]
+    posts = Post.objects.filter(Q(author=request.user) | Q(author_id__in=friends)).select_related("author")
+    page = Paginator(posts, 20).get_page(request.GET.get("page"))
     context = {
         "post_form": PostForm(),
-        "feed_posts": _post_context(posts, request.user),
+        "feed_posts": _post_context(page.object_list, request.user),
+        "page_obj": page,
         "friend_count": _accepted_friends(request.user).count(),
         "pending_request_count": FriendshipRequest.objects.filter(recipient=request.user, status=FriendshipStatus.PENDING).count(),
     }
@@ -128,11 +130,15 @@ def public_profile(request, user_id):
         Q(sender=request.user, recipient=profile_user) | Q(sender=profile_user, recipient=request.user)
     ).order_by("-created_at").first()
     is_friend = _accepted_friends(request.user).filter(pk=profile_user.pk).exists()
-    posts = profile_user.posts.select_related("author")[:100]
+    profile_posts = profile_user.posts.select_related("author")
+    if not is_friend:
+        profile_posts = profile_posts.filter(visibility=PostVisibility.PUBLIC)
+    page = Paginator(profile_posts, 20).get_page(request.GET.get("page"))
     return render(request, "social/profile.html", {
         "profile_user": profile_user, "is_friend": is_friend,
         "relationship": relationship,
-        "profile_posts": _post_context(posts, request.user),
+        "profile_posts": _post_context(page.object_list, request.user),
+        "page_obj": page,
         "pending_request_count": FriendshipRequest.objects.filter(recipient=request.user, status=FriendshipStatus.PENDING).count(),
     })
 
