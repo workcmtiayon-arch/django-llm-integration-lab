@@ -32,6 +32,10 @@ class FriendshipRequest(TimeStampedModel):
 
     class Meta:
         ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=("recipient", "status", "-created_at"), name="friend_inbox_idx"),
+            models.Index(fields=("sender", "status", "-created_at"), name="friend_outbox_idx"),
+        ]
         constraints = [
             models.UniqueConstraint(fields=("sender", "recipient"), name="unique_friendship_direction"),
             models.CheckConstraint(condition=~Q(sender=models.F("recipient")), name="friendship_not_self"),
@@ -53,6 +57,10 @@ class Post(TimeStampedModel):
     class Meta:
         ordering = ("-created_at",)
         permissions = [("moderate_post", "Can moderate posts")]
+        indexes = [
+            models.Index(fields=("author", "-created_at"), name="post_author_time_idx"),
+            models.Index(fields=("visibility", "-created_at"), name="post_visibility_time_idx"),
+        ]
 
     def __str__(self):
         return f"Publication de {self.author} ({self.created_at:%Y-%m-%d})"
@@ -83,6 +91,7 @@ class PostReport(TimeStampedModel):
 
     class Meta:
         ordering = ("-created_at",)
+        indexes = [models.Index(fields=("recipient", "read_at", "-created_at"), name="social_notification_idx")]
         constraints = [models.UniqueConstraint(fields=("reporter", "post"), name="unique_post_report")]
 
 
